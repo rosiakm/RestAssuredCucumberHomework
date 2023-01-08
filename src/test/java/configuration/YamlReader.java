@@ -12,12 +12,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class YamlReader {
-    private static Logger log = LoggerFactory.getLogger(YamlReader.class);
+    private static final Logger log = LoggerFactory.getLogger(YamlReader.class);
     private Config config;
     public YamlReader() {
         try{
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-            this.config = mapper.readValue(new File("src/main/resources/config.yaml"),Config.class);
+            this.config = mapper.readValue(new File("src/test/resources/config.yaml"),Config.class);
             log.info("<<<Config YAML file has been read>>>");
         } catch (FileNotFoundException e){
             e.printStackTrace();

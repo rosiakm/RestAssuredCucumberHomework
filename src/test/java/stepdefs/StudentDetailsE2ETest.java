@@ -8,11 +8,13 @@ import models.Student;
 import models.StudentResponse;
 import org.assertj.core.api.Assertions;
 import providers.StudentBuilder;
-import stepdefs.base.TestBase;
 
 import static io.restassured.RestAssured.given;
+import static stepdefs.base.RequestSpecifications.getRequestData;
+import static stepdefs.base.RequestSpecifications.getRequestDataWithPathParam;
+import static stepdefs.base.ResponseSpecifications.getResponseData;
 
-public class StudentDetailsE2ETest extends TestBase {
+public class StudentDetailsE2ETest {
     private Student student;
     private int id;
     private StudentResponse response;
@@ -35,7 +37,7 @@ public class StudentDetailsE2ETest extends TestBase {
         response = given()
                 .spec(getRequestDataWithPathParam(id)).
         when()
-                .get("/{id}").
+                .get().
         then()
                 .statusCode(200)
                 .spec(getResponseData())
@@ -51,7 +53,7 @@ public class StudentDetailsE2ETest extends TestBase {
                 .spec(getRequestDataWithPathParam(id))
                 .body(student).
         when()
-                .put("/{id}").
+                .put().
         then()
                 .statusCode(200)
                 .spec(getResponseData())
@@ -64,7 +66,7 @@ public class StudentDetailsE2ETest extends TestBase {
         response = given()
                 .spec(getRequestDataWithPathParam(id)).
         when()
-                .get("/{id}").
+                .get().
         then()
                 .statusCode(200)
                 .spec(getResponseData())
@@ -77,7 +79,7 @@ public class StudentDetailsE2ETest extends TestBase {
         given()
                 .spec(getRequestDataWithPathParam(id)).
         when()
-                .delete("/{id}").
+                .delete().
         then()
                 .statusCode(200)
                 .spec(getResponseData());
@@ -88,7 +90,7 @@ public class StudentDetailsE2ETest extends TestBase {
         given()
                 .spec(getRequestDataWithPathParam(id)).
         when()
-                .get("/{id}").
+                .get().
         then()
                 .statusCode(404);
     }
