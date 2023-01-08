@@ -1,0 +1,4 @@
+base_uri: https://thetestingworldapi.com/
+base_path: api/studentsDetails
+content_type: application/json
+response_status: true
