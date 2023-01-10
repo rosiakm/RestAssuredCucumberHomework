@@ -7,6 +7,8 @@ import io.restassured.common.mapper.TypeRef;
 import models.Student;
 import models.StudentResponse;
 import org.assertj.core.api.Assertions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import providers.StudentBuilder;
 
 import static io.restassured.RestAssured.given;
@@ -15,12 +17,14 @@ import static stepdefs.base.RequestSpecifications.getRequestDataWithPathParam;
 import static stepdefs.base.ResponseSpecifications.getResponseData;
 
 public class StudentDetailsE2ETest {
+    private static final Logger log = LoggerFactory.getLogger(StudentDetailsE2ETest.class);
     private Student student;
     private int id;
     private StudentResponse response;
     @Given("The new student has been registered")
     public void the_new_student_has_been_registered() {
         student = StudentBuilder.createStudent();
+        log.info(">>>>>NEW STUDENT HAS BEEN CREATED<<<<<");
         id = given()
                 .spec(getRequestData())
                 .body(student).
