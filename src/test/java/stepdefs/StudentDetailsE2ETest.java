@@ -1,5 +1,6 @@
 package stepdefs;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -9,11 +10,11 @@ import models.StudentResponse;
 import org.assertj.core.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import providers.RequestBuilder;
 import providers.StudentBuilder;
+import utils.ApiClient;
+import utils.Parameters;
 
-import static io.restassured.RestAssured.given;
-import static stepdefs.base.RequestSpecifications.getRequestData;
-import static stepdefs.base.RequestSpecifications.getRequestDataWithPathParam;
 import static stepdefs.base.ResponseSpecifications.getResponseData;
 
 public class StudentDetailsE2ETest {
@@ -21,43 +22,41 @@ public class StudentDetailsE2ETest {
     private Student student;
     private int id;
     private StudentResponse response;
-    @Given("The new student has been registered")
-    public void the_new_student_has_been_registered() {
+    private final ApiClient client = new ApiClient();
+    Parameters parameters = RequestBuilder.setParameters();
+
+    public StudentDetailsE2ETest() {
+    }
+
+    @Given("Send POST to register new student")
+    public void sendPOSTToRegisterNewStudent() {
         student = StudentBuilder.createStudent();
         log.info(">>>>>NEW STUDENT HAS BEEN CREATED<<<<<");
-        id = given()
-                .spec(getRequestData())
-                .body(student).
-        when()
-                .post().
+        id = client.sendPOSTStudentRequest(parameters, student).
         then()
                 .statusCode(201)
+                .spec(getResponseData())
                 .extract()
                 .path("id");
     }
 
-    @When("The Students details are saved")
-    public void the_students_details_are_saved() {
-        response = given()
-                .spec(getRequestDataWithPathParam(id)).
-        when()
-                .get().
+    @When("Send GET to check if student exists")
+    public void sendGETToCheckIfStudentExists() {
+        parameters.setPATH_PARAM(id);
+        response = client.sendGETStudentRequestWithParam(parameters).
         then()
                 .statusCode(200)
                 .spec(getResponseData())
-                .extract().as(new TypeRef<StudentResponse>(){});
+                .extract().as(new TypeRef<StudentResponse>() {
+                });
         Assertions.assertThat(response.getStatus()).isEqualTo(System.getProperty("response_status"));
         Assertions.assertThat(response.getData().getFirst_name()).isEqualTo(student.getFirst_name());
     }
 
-    @When("The Students middle name has been updated")
-    public void the_students_middle_name_has_been_updated() {
+    @And("Send PUT to update student data")
+    public void sendPUTToUpdateStudentData() {
         student.setMiddle_name("John");
-        response = given()
-                .spec(getRequestDataWithPathParam(id))
-                .body(student).
-        when()
-                .put().
+        response = client.sendPUTStudentRequest(parameters, student).
         then()
                 .statusCode(200)
                 .spec(getResponseData())
@@ -65,36 +64,26 @@ public class StudentDetailsE2ETest {
         Assertions.assertThat(response.getData().getMiddle_name()).isEqualTo(student.getMiddle_name());
     }
 
-    @When("Updates are saved")
-    public void updates_are_saved() {
-        response = given()
-                .spec(getRequestDataWithPathParam(id)).
-        when()
-                .get().
+    @And("Send GET to check if student data updated")
+    public void sendGETToCheckIfStudentDataUpdated() {
+        response = client.sendGETStudentRequestWithParam(parameters).
         then()
                 .statusCode(200)
                 .spec(getResponseData())
-                .extract().as(new TypeRef<StudentResponse>(){});
+                .extract().as(new TypeRef<StudentResponse>() {
+                });
         Assertions.assertThat(response.getData().getMiddle_name()).isEqualTo(student.getMiddle_name());
     }
-
-    @When("The Student has been deleted")
-    public void the_student_has_been_deleted() {
-        given()
-                .spec(getRequestDataWithPathParam(id)).
-        when()
-                .delete().
+    @And("Send DELETE to remove student")
+    public void sendDELETEToRemoveStudent() {
+        client.sendDELETEStudentRequest(parameters).
         then()
                 .statusCode(200)
                 .spec(getResponseData());
     }
-
-    @Then("The Student does not exist anymore")
-    public void the_student_does_not_exist_anymore() {
-        given()
-                .spec(getRequestDataWithPathParam(id)).
-        when()
-                .get().
+    @Then("Send GET to check if student does not exist anymore")
+    public void sendGETToCheckIfStudentDoesNotExistAnymore() {
+        client.sendGETStudentRequestWithParam(parameters).
         then()
                 .statusCode(404);
     }
