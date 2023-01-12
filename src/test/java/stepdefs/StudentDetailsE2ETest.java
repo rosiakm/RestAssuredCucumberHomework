@@ -42,7 +42,7 @@ public class StudentDetailsE2ETest {
 
     @When("Send GET to check if student exists")
     public void sendGETToCheckIfStudentExists() {
-        parameters.setPATH_PARAM(id);
+        parameters.setPARAM(id);
         response = client.sendGETStudentRequestWithParam(parameters).
         then()
                 .statusCode(200)

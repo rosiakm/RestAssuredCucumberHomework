@@ -12,7 +12,7 @@ public class ApiClient {
                 .baseUri(parameters.getBASE_URI())
                 .basePath(parameters.getBASE_PATH())
                 .contentType(parameters.getCONTENT_TYPE())
-                .param("id",parameters.getPATH_PARAM()).
+                .param("id",parameters.getPARAM()).
         when()
                 .get();
     }
@@ -39,7 +39,7 @@ public class ApiClient {
                 .baseUri(parameters.getBASE_URI())
                 .basePath(parameters.getBASE_PATH())
                 .contentType(parameters.getCONTENT_TYPE())
-                .pathParam("id",parameters.getPATH_PARAM()).
+                .pathParam("id",parameters.getPARAM()).
         when()
                 .delete();
     }
